@@ -1,0 +1,42 @@
+
+.tasklist{
+    width:500px;
+    margin: 20px auto;
+}
+
+.tasklist h1{
+    margin: auto;
+    Color:#333;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.todo_item-list li{
+padding:5px;
+}
+.todo_item-list li span{
+    padding-right: 20px;
+
+}
+
+li {
+    list-style: none;
+    display: flex;
+}
+
+li.completed {
+    background: #59ddb1;
+}
+
+li.todo {
+    background:#e37575;
+}
+
+.addtask {
+    padding: 20px;
+}
+
+span.delete {
+    margin-left: auto;
+}
+.task_name{
+    padding-left: 10px;
+}
