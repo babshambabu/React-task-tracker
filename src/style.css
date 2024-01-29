@@ -26,7 +26,7 @@ li.completed {
     background: #59ddb1;
 }
 
-li.todo {
+li.incomplete {
     background:#e37575;
 }
 
@@ -39,4 +39,20 @@ span.delete {
 }
 .task_name{
     padding-left: 10px;
+}
+
+
+.filter-buttons li {
+    border: 1px solid #999;
+    margin: 5px;
+    padding: 5px 20px;
+    cursor: pointer;
+}
+
+.filter-buttons li:hover {
+    border: 1px solid #000;
+}
+
+.filter-buttons ul{
+    display:flex;
 }

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import './style.css';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-let counter=1;
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+
+
+
 const TaskList = () => {
 
   const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')) || []);
@@ -12,13 +14,13 @@ const TaskList = () => {
   const [newTask, setNewTask] = useState('');
 
   useEffect(() => {
-
+    // Load tasks from localStorage on component mount
     const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
     setTasks(storedTasks);
   }, []);
 
   useEffect(() => {
-    
+    // Save tasks to localStorage whenever tasks state changes
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
   useEffect(()=> {
@@ -36,9 +38,9 @@ const TaskList = () => {
       alert("Please add a task");
       return;
     }
-    counter += 1;
+
     const todo_item = {
-      id: counter,
+      id: Math.random(),
       name: newTask,
       dateAdded: new Date().toLocaleDateString(),
       completed: false,
@@ -59,6 +61,19 @@ const TaskList = () => {
     );
   };
 
+    
+  const handleDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+  
+    const reorderedTasks = Array.from(tasks);
+    const [movedTask] = reorderedTasks.splice(result.source.index, 1);
+    reorderedTasks.splice(result.destination.index, 0, movedTask);
+  
+    setTasks(reorderedTasks);
+  };
+
   // const filteredTasks = tasks.filter((task) => {
   //   if (filter === 'completed') {
   //     return task.completed;
@@ -68,26 +83,7 @@ const TaskList = () => {
   //     return true;
   //   }
   // });
-  const filteredTasks=tasks.filter( (filteritem) =>{
-    
-    if(filter === "all")
-    return true;
 
-return filteritem.completed === filter
-  })
-
-  const handleDragEnd = (result) => {
-    console.log(result);
-    if (!result.destination) {
-      return;
-    }
-
-    const reorderedTasks = Array.from(tasks);
-    const [movedTask] = reorderedTasks.splice(result.source.index, 1);
-    reorderedTasks.splice(result.destination.index, 0, movedTask);
-
-    setTasks(reorderedTasks);
-  };
   return (
   <div className="tasklist">
   <h1>Task Tracker</h1>
@@ -107,17 +103,15 @@ return filteritem.completed === filter
   </div>
 
 <div>
-<DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="tasks">
-          {(provided) => (
-  <ul className="todo_item-list"  {...provided.droppableProps}
-              ref={provided.innerRef}>
-  {filteredTasks.map((todo_item,index) => (
-     <Draggable key={todo_item.id} draggableId={todo_item.id.toString()} index={index}>
-     {(provided) => (
-        <li ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps} key={todo_item.id} className={todo_item.completed ? 'completed' : 'incomplete'}>
+  <ul className="todo_item-list">
+  {tasks.filter( (filteritem) =>{
+    
+    if(filter === "all")
+    return true;
+
+return filteritem.completed === filter
+  }).map((todo_item) => (
+        <li key={todo_item.id} className={todo_item.completed ? 'completed' : 'incomplete'}>
               <input  type="checkbox" checked={todo_item.completed}  onChange={() => toggleCompleted(todo_item.id)}  />
 
   <span className="task_name">{todo_item.name}</span>
@@ -128,20 +122,43 @@ return filteritem.completed === filter
   </a>
   </span>
   </li>
-     )}
-     </Draggable>
   ))}
-   {provided.placeholder}
   </ul>
+  </div>
+      <DragDropContext onDragEnd={ handleDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided) => (
+            <ul ref={provided.innerRef} {...provided.droppableProps}>
+              {tasks.map((task, index) => (
+                <Draggable key={task.id} draggableId={task.id} index={index}>
+                  {(provided) => (
+                    <li
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      {task.content}
+                    </li>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </ul>
           )}
-          </Droppable>
+        </Droppable>
       </DragDropContext>
-  </div>
-  
   <div className="summary" >{ tasks.length } items</div>
-  
   </div>
+  
+  
+
+  
+    
+  
+    
+  
   );
+
 };
 
 export default TaskList;
